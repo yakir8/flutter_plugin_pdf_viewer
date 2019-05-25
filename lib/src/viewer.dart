@@ -14,17 +14,27 @@ class PDFViewer extends StatefulWidget {
   final bool showPicker;
   final bool showNavigation;
   final PDFViewerTooltip tooltip;
+  final double initialScale;
+  final Offset initialOffset;
+  final Function onZoomChanged;
+  final Function onOffsetChanged;
+  bool darkMod;
 
-  PDFViewer(
-      {Key key,
-      @required this.document,
-      this.indicatorText = Colors.white,
-      this.indicatorBackground = Colors.black54,
-      this.showIndicator = true,
-      this.showPicker = true,
-      this.showNavigation = true,
-      this.tooltip = const PDFViewerTooltip(),
-      this.indicatorPosition = IndicatorPosition.topRight})
+  PDFViewer({
+              Key key,
+              @required this.document,
+              this.indicatorText = Colors.white,
+              this.indicatorBackground = Colors.black54,
+              this.showIndicator = true,
+              this.showPicker = true,
+              this.showNavigation = true,
+              this.tooltip = const PDFViewerTooltip(),
+              this.initialOffset = Offset.zero,
+              this.initialScale = 1.0,
+              this.darkMod = false,
+              this.onZoomChanged,
+              this.onOffsetChanged,
+              this.indicatorPosition = IndicatorPosition.topRight})
       : super(key: key);
 
   _PDFViewerState createState() => _PDFViewerState();
@@ -60,11 +70,20 @@ class _PDFViewerState extends State<PDFViewer> {
     });
     if (_oldPage == 0) {
       _page = await widget.document.get(page: _pageNumber);
+      _page.darkMod = widget.darkMod;
+      _page.initialScale = widget.initialScale;
+      _page.initialOffset = widget.initialOffset;
+      _page.onZoomChanged = widget.onZoomChanged;
+      _page.onOffsetChanged = widget.onOffsetChanged;
       setState(() => _isLoading = false);
-    } else if (_oldPage != _pageNumber) {
+    }
+    else if (_oldPage != _pageNumber) {
       _oldPage = _pageNumber;
       setState(() => _isLoading = true);
       _page = await widget.document.get(page: _pageNumber);
+      _page.darkMod = widget.darkMod;
+      _page.onZoomChanged = widget.onZoomChanged;
+      _page.onOffsetChanged = widget.onOffsetChanged;
       setState(() => _isLoading = false);
     }
   }
@@ -74,7 +93,7 @@ class _PDFViewerState extends State<PDFViewer> {
         onTap: _pickPage,
         child: Container(
             padding:
-                EdgeInsets.only(top: 4.0, left: 16.0, bottom: 4.0, right: 16.0),
+            EdgeInsets.only(top: 4.0, left: 16.0, bottom: 4.0, right: 16.0),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(4.0),
                 color: widget.indicatorBackground),
@@ -130,73 +149,73 @@ class _PDFViewerState extends State<PDFViewer> {
       ),
       floatingActionButton: widget.showPicker
           ? FloatingActionButton(
-              elevation: 4.0,
-              tooltip: widget.tooltip.jump,
-              child: Icon(Icons.view_carousel),
-              onPressed: () {
-                _pickPage();
-              },
-            )
+        elevation: 4.0,
+        tooltip: widget.tooltip.jump,
+        child: Icon(Icons.view_carousel),
+        onPressed: () {
+          _pickPage();
+        },
+      )
           : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: (widget.showNavigation || widget.document.count > 1)
           ? BottomAppBar(
-              child: new Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Expanded(
-                    child: IconButton(
-                      icon: Icon(Icons.first_page),
-                      tooltip: widget.tooltip.first,
-                      onPressed: () {
-                        _pageNumber = 1;
-                        _loadPage();
-                      },
-                    ),
-                  ),
-                  Expanded(
-                    child: IconButton(
-                      icon: Icon(Icons.chevron_left),
-                      tooltip: widget.tooltip.previous,
-                      onPressed: () {
-                        _pageNumber--;
-                        if (1 > _pageNumber) {
-                          _pageNumber = 1;
-                        }
-                        _loadPage();
-                      },
-                    ),
-                  ),
-                  widget.showPicker
-                      ? Expanded(child: Text(''))
-                      : SizedBox(width: 1),
-                  Expanded(
-                    child: IconButton(
-                      icon: Icon(Icons.chevron_right),
-                      tooltip: widget.tooltip.next,
-                      onPressed: () {
-                        _pageNumber++;
-                        if (widget.document.count < _pageNumber) {
-                          _pageNumber = widget.document.count;
-                        }
-                        _loadPage();
-                      },
-                    ),
-                  ),
-                  Expanded(
-                    child: IconButton(
-                      icon: Icon(Icons.last_page),
-                      tooltip: widget.tooltip.last,
-                      onPressed: () {
-                        _pageNumber = widget.document.count;
-                        _loadPage();
-                      },
-                    ),
-                  ),
-                ],
+        child: new Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Expanded(
+              child: IconButton(
+                icon: Icon(Icons.first_page),
+                tooltip: widget.tooltip.first,
+                onPressed: () {
+                  _pageNumber = 1;
+                  _loadPage();
+                },
               ),
-            )
-          : Container(),
+            ),
+            Expanded(
+              child: IconButton(
+                icon: Icon(Icons.chevron_left),
+                tooltip: widget.tooltip.previous,
+                onPressed: () {
+                  _pageNumber--;
+                  if (1 > _pageNumber) {
+                    _pageNumber = 1;
+                  }
+                  _loadPage();
+                },
+              ),
+            ),
+            widget.showPicker
+                ? Expanded(child: Text(''))
+                : SizedBox(width: 1),
+            Expanded(
+              child: IconButton(
+                icon: Icon(Icons.chevron_right),
+                tooltip: widget.tooltip.next,
+                onPressed: () {
+                  _pageNumber++;
+                  if (widget.document.count < _pageNumber) {
+                    _pageNumber = widget.document.count;
+                  }
+                  _loadPage();
+                },
+              ),
+            ),
+            Expanded(
+              child: IconButton(
+                icon: Icon(Icons.last_page),
+                tooltip: widget.tooltip.last,
+                onPressed: () {
+                  _pageNumber = widget.document.count;
+                  _loadPage();
+                },
+              ),
+            ),
+          ],
+        ),
+      )
+          : null,
     );
   }
 }
