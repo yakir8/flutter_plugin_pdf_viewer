@@ -18,7 +18,7 @@ class PDFViewer extends StatefulWidget {
   final Offset initialOffset;
   final Function onZoomChanged;
   final Function onOffsetChanged;
-  bool darkMod;
+  bool darkMod = false;
 
   PDFViewer({
               Key key,
