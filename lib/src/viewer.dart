@@ -45,6 +45,7 @@ class _PDFViewerState extends State<PDFViewer> {
   int _pageNumber = 1;
   int _oldPage = 0;
   PDFPage _page;
+  List<PDFPage> _pages = List();
 
   @override
   void didChangeDependencies() {
@@ -52,6 +53,7 @@ class _PDFViewerState extends State<PDFViewer> {
     _oldPage = 0;
     _pageNumber = 1;
     _isLoading = true;
+    _pages.clear();
     _loadPage();
   }
 
@@ -65,9 +67,7 @@ class _PDFViewerState extends State<PDFViewer> {
   }
 
   _loadPage() async {
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
     if (_oldPage == 0) {
       _page = await widget.document.get(page: _pageNumber);
       _page.darkMod = widget.darkMod;
@@ -75,16 +75,16 @@ class _PDFViewerState extends State<PDFViewer> {
       _page.initialOffset = widget.initialOffset;
       _page.onZoomChanged = widget.onZoomChanged;
       _page.onOffsetChanged = widget.onOffsetChanged;
-      setState(() => _isLoading = false);
+      if (this.mounted) setState(() => _isLoading = false);
     }
     else if (_oldPage != _pageNumber) {
       _oldPage = _pageNumber;
-      setState(() => _isLoading = true);
+      if (this.mounted) setState(() => _isLoading = true);
       _page = await widget.document.get(page: _pageNumber);
       _page.darkMod = widget.darkMod;
       _page.onZoomChanged = widget.onZoomChanged;
       _page.onOffsetChanged = widget.onOffsetChanged;
-      setState(() => _isLoading = false);
+      if (this.mounted) setState(() => _isLoading = false);
     }
   }
 

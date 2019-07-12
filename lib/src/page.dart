@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'dart:ui';
+import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_advanced_networkimage/zoomable.dart';
 
@@ -12,7 +13,8 @@ class PDFPage extends StatefulWidget {
   Function onOffsetChanged;
   bool darkMod;
 
-  PDFPage(this.imgPath);
+  final int num;
+  PDFPage(this.imgPath, this.num);
 
   @override
   _PDFPageState createState() => _PDFPageState();
@@ -38,9 +40,9 @@ class _PDFPageState extends State<PDFPage> {
   _repaint() {
     provider = FileImage(File(widget.imgPath));
     final resolver = provider.resolve(createLocalImageConfiguration(context));
-    resolver.addListener((imgInfo, alreadyPainted) {
+    resolver.addListener(ImageStreamListener((imgInfo, alreadyPainted) {
       if (!alreadyPainted) setState(() {});
-    });
+    }));
   }
 
   @override
@@ -51,7 +53,7 @@ class _PDFPageState extends State<PDFPage> {
           initialOffset: widget.initialOffset,
           initialScale: widget.initialScale,
           onZoomChanged: widget.onZoomChanged,
-          onOffsetChanged: widget.onOffsetChanged,
+//          onOffsetChanged: widget.onOffsetChanged,
           zoomSteps: 3,
           minScale: 1.0,
           panLimit: 0.8,
