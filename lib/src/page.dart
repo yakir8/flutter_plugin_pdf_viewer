@@ -53,7 +53,7 @@ class _PDFPageState extends State<PDFPage> {
           initialOffset: widget.initialOffset,
           initialScale: widget.initialScale,
           onZoomChanged: widget.onZoomChanged,
-//          onOffsetChanged: widget.onOffsetChanged,
+          onOffsetChanged: widget.onOffsetChanged,
           zoomSteps: 3,
           minScale: 1.0,
           panLimit: 0.8,
