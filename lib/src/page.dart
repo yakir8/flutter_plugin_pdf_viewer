@@ -8,6 +8,10 @@ import 'package:flutter_advanced_networkimage/zoomable.dart';
 class PDFPage extends StatefulWidget {
   final String imgPath;
   double initialScale = 1.0;
+  double minScale = 1.0;
+  double maxScale = 6.0;
+  double panLimit = 0.8;
+  int zoomSteps = 3;
   Offset initialOffset = Offset.zero;
   Function onZoomChanged;
   Function onOffsetChanged;
@@ -48,18 +52,18 @@ class _PDFPageState extends State<PDFPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        decoration: null,
-        child: ZoomableWidget(
-          initialOffset: widget.initialOffset,
-          initialScale: widget.initialScale,
-          onZoomChanged: widget.onZoomChanged,
-          onOffsetChanged: widget.onOffsetChanged,
-          zoomSteps: 3,
-          minScale: 1.0,
-          panLimit: 0.8,
-          maxScale: 4,
-          child: widget.darkMod ? Image(image: provider,color: Colors.grey[350],
-            colorBlendMode: BlendMode.difference,) : Image(image: provider),),
-        );
+      decoration: null,
+      child: ZoomableWidget(
+        initialOffset: widget.initialOffset,
+        initialScale: widget.initialScale,
+        onZoomChanged: widget.onZoomChanged,
+        onOffsetChanged: widget.onOffsetChanged,
+        zoomSteps: widget.zoomSteps,
+        minScale: widget.minScale,
+        panLimit: widget.panLimit,
+        maxScale: widget.maxScale,
+        child: widget.darkMod ? Image(image: provider,color: Colors.grey[350],
+          colorBlendMode: BlendMode.difference,) : Image(image: provider),),
+    );
   }
 }
