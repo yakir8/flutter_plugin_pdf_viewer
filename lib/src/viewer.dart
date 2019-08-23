@@ -15,6 +15,10 @@ class PDFViewer extends StatefulWidget {
   final bool showNavigation;
   final PDFViewerTooltip tooltip;
   final double initialScale;
+  final double minScale;
+  final double maxScale;
+  final double panLimit;
+  final int zoomSteps;
   final Offset initialOffset;
   final Function onZoomChanged;
   final Function onOffsetChanged;
@@ -31,6 +35,10 @@ class PDFViewer extends StatefulWidget {
               this.tooltip = const PDFViewerTooltip(),
               this.initialOffset = Offset.zero,
               this.initialScale = 1.0,
+              this.minScale = 1.0,
+              this.maxScale = 6.0,
+              this.panLimit = 0.8,
+              this.zoomSteps = 3,
               this.darkMod = false,
               this.onZoomChanged,
               this.onOffsetChanged,
@@ -72,6 +80,10 @@ class _PDFViewerState extends State<PDFViewer> {
       _page = await widget.document.get(page: _pageNumber);
       _page.darkMod = widget.darkMod;
       _page.initialScale = widget.initialScale;
+      _page.zoomSteps = widget.zoomSteps;
+      _page.minScale = widget.minScale;
+      _page.maxScale = widget.maxScale;
+      _page.panLimit = widget.panLimit;
       _page.initialOffset = widget.initialOffset;
       _page.onZoomChanged = widget.onZoomChanged;
       _page.onOffsetChanged = widget.onOffsetChanged;
