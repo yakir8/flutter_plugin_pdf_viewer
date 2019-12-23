@@ -230,4 +230,11 @@ class _PDFViewerState extends State<PDFViewer> {
           : null,
     );
   }
+  
+    @override
+  void setState(fn) {
+    if(mounted){
+      super.setState(fn);
+    }
+  }
 }
