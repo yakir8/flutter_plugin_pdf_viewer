@@ -66,4 +66,11 @@ class _PDFPageState extends State<PDFPage> {
           colorBlendMode: BlendMode.difference,) : Image(image: provider),),
     );
   }
+  
+    @override
+  void setState(fn) {
+    if(mounted){
+      super.setState(fn);
+    }
+  }
 }
